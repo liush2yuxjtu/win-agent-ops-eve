@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "scenes": 5,
+  "switching": true,
+  "feedbackSavedAcrossReload": true,
+  "feedbackExported": true,
+  "keyboardNavigation": true,
+  "mobilePageOverflow": false,
+  "remoteRequests": [],
+  "scriptErrors": [],
+  "textGeometryIssues": [],
+  "screenshotsTaken": false,
+  "recordingStarted": false
+}

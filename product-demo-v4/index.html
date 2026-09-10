@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>WIN AGENT OS · Issue SDLC Product Demo V4</title>
+  <style>
+    :root {
+      --paper: #f4f3ee;
+      --paper-strong: #fffefa;
+      --ink: #202b2a;
+      --muted: #68736f;
+      --line: #d6ddd7;
+      --line-strong: #b9c8bd;
+      --green: #214f42;
+      --green-soft: #e6efe8;
+      --blue: #2e5eb6;
+      --blue-soft: #edf3ff;
+      --amber: #96651a;
+      --amber-soft: #fbf1dc;
+      --red: #a33f35;
+      --red-soft: #f9eae5;
+      --shadow: 0 20px 60px rgba(34, 55, 43, .14), 0 3px 10px rgba(34, 55, 43, .08);
+      --radius: 10px;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: "Avenir Next", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--paper);
+      color: var(--ink);
+      font: 14px/1.65 var(--sans);
+    }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible {
+      outline: 3px solid #c28a30;
+      outline-offset: 3px;
+    }
+    button:disabled { cursor: not-allowed; opacity: .52; }
+    p, h1, h2, h3, h4 { margin: 0; }
+    h1 { font-size: clamp(36px, 6vw, 76px); line-height: 1.03; letter-spacing: -.055em; font-weight: 580; }
+    h2 { font-size: 24px; line-height: 1.25; font-weight: 640; }
+    h3 { font-size: 16px; line-height: 1.35; font-weight: 650; }
+    .mono { font-family: var(--mono); }
+    .muted { color: var(--muted); }
+    .small { font-size: 12px; }
+    .eyebrow {
+      color: var(--green);
+      font: 11px/1.2 var(--mono);
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .topbar {
+      min-height: 62px;
+      border-bottom: 1px solid var(--line);
+      padding: 0 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      color: var(--muted);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+    .brand-mark {
+      width: 29px;
+      height: 29px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--green);
+      color: white;
+      font: 700 15px Georgia, serif;
+    }
+    .brand-name { font-size: 13px; font-weight: 700; letter-spacing: .08em; }
+    .brand-sub { display: block; color: var(--muted); font: 10px/1.1 var(--mono); letter-spacing: .08em; margin-top: 2px; }
+    .top-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font: 11px var(--mono);
+      white-space: nowrap;
+    }
+    .top-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 4px #96651a20; }
+    main { max-width: 1480px; margin: 0 auto; padding: 0 30px 50px; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 390px);
+      gap: 55px;
+      align-items: end;
+      padding: 78px 0 34px;
+    }
+    .hero-copy { max-width: 850px; }
+    .hero h1 { margin-top: 18px; max-width: 850px; }
+    .hero h1 em { color: var(--green); font-style: normal; }
+    .hero-description { max-width: 640px; margin-top: 23px; color: var(--muted); font-size: 16px; }
+    .hero-description strong { color: var(--ink); font-weight: 650; }
+    .hero-aside {
+      border-left: 3px solid var(--green);
+      background: var(--green-soft);
+      padding: 18px 20px;
+      color: #37554a;
+      font-size: 13px;
+    }
+    .hero-aside strong { display: block; color: var(--green); margin-bottom: 5px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 27px; }
+    .button {
+      min-height: 42px;
+      padding: 9px 15px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: var(--paper-strong);
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .button:hover { transform: translateY(-1px); border-color: var(--green); background: white; }
+    .button.primary { border-color: var(--green); background: var(--green); color: white; }
+    .button.primary:hover { background: #183e34; }
+    .button.ghost { border-color: transparent; background: transparent; color: var(--muted); }
+    .button.ghost:hover { color: var(--ink); background: var(--green-soft); }
+    .case-meta { margin-top: 18px; color: var(--muted); font: 11px var(--mono); overflow-wrap: anywhere; }
+    .rail {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      margin: 6px 0 18px;
+    }
+    .rail-step {
+      min-height: 48px;
+      border-top: 2px solid var(--line-strong);
+      padding: 8px 10px 0;
+      color: var(--muted);
+      font-size: 12px;
+      transition: color .2s ease, border-color .2s ease;
+    }
+    .rail-step span { display: block; font: 10px var(--mono); margin-bottom: 2px; }
+    .rail-step.is-active { color: var(--green); border-color: var(--green); font-weight: 650; }
+    .rail-step.is-done { color: var(--blue); border-color: var(--blue); }
+    .demo-stage {
+      position: relative;
+      min-height: 870px;
+      isolation: isolate;
+      overflow: hidden;
+      border: 1px solid #c3d1c6;
+      border-radius: 16px;
+      background: #dfe9df;
+      box-shadow: 0 18px 45px rgba(33, 71, 53, .08);
+    }
+    .wallpaper { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; }
+    .stage-head {
+      position: absolute;
+      z-index: 2;
+      top: 17px;
+      left: 22px;
+      right: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: #3e5c4b;
+    }
+    .stage-head-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .stage-code { font: 11px var(--mono); letter-spacing: .06em; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 5px; padding: 4px 8px; font-size: 11px; line-height: 1.2; }
+    .badge.green { background: var(--green-soft); color: var(--green); }
+    .badge.blue { background: var(--blue-soft); color: var(--blue); }
+    .badge.amber { background: var(--amber-soft); color: var(--amber); }
+    .badge.red { background: var(--red-soft); color: var(--red); }
+    .stage-head .button { min-height: 31px; padding: 4px 10px; font-size: 11px; background: #f9fcf7cc; }
+    .stage-status {
+      position: absolute;
+      z-index: 2;
+      top: 52px;
+      left: 22px;
+      right: 22px;
+      min-height: 23px;
+      color: #466657;
+      font-size: 12px;
+    }
+    .demo-window {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      min-width: 280px;
+      min-height: 210px;
+      overflow: hidden;
+      border: 1px solid rgba(99, 126, 105, .46);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 251, .96);
+      box-shadow: var(--shadow);
+      transition: box-shadow .2s ease, border-color .2s ease;
+    }
+    .demo-window:hover { border-color: #8da895; }
+    .demo-window.is-focused { z-index: 10 !important; border-color: var(--green); box-shadow: 0 25px 65px rgba(29, 70, 48, .22), 0 0 0 2px #214f4226; }
+    [data-window="cause"] { left: 2.5%; top: 10%; width: 43%; height: 43%; z-index: 3; }
+    [data-window="logs"] { right: 2.5%; top: 10%; width: 37%; height: 45%; z-index: 2; }
+    [data-window="solutions"] { left: 7%; bottom: 3.5%; width: 54%; height: 43%; z-index: 4; }
+    [data-window="decision"] { right: 4%; bottom: 3.5%; width: 31%; height: 35%; z-index: 5; }
+    .window-bar {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+      padding: 8px 12px;
+      background: #f8faf5;
+      user-select: none;
+      touch-action: none;
+      cursor: grab;
+    }
+    .window-bar:active { cursor: grabbing; }
+    .window-title { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 12px; font-weight: 650; }
+    .window-title::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 12px 0 0 #c49a48, 24px 0 0 #c67e73; margin-right: 20px; flex-shrink: 0; }
+    .window-tools { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .window-tool { min-height: 27px; padding: 3px 7px; border: 1px solid var(--line); border-radius: 5px; background: white; color: var(--muted); font-size: 11px; }
+    .window-tool:hover { color: var(--ink); border-color: var(--green); }
+    .window-body { flex: 1; min-height: 0; overflow: auto; padding: 17px 18px 18px; }
+    .window-body::-webkit-scrollbar { width: 8px; height: 8px; }
+    .window-body::-webkit-scrollbar-thumb { background: #b9c9bb; border-radius: 99px; border: 2px solid white; }
+    .window-kicker { color: var(--muted); font: 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    .window-lead { margin-top: 5px; font-size: 14px; line-height: 1.55; }
+    .window-lead strong { color: var(--red); }
+    .cause-chain { display: grid; grid-template-columns: repeat(5, minmax(90px, 1fr)); gap: 7px; align-items: stretch; margin: 18px 0 17px; }
+    .chain-card { position: relative; min-height: 103px; border: 1px solid var(--line); border-radius: 7px; padding: 10px 9px; background: #fffefa; animation: chain-in .55s both; animation-delay: calc(var(--i) * 110ms); }
+    .chain-card:not(:last-child)::after { content: "›"; position: absolute; right: -8px; top: 42px; z-index: 1; color: var(--green); font-size: 21px; font-weight: 700; }
+    .chain-card.is-hypothesis { border-color: #d4bf8a; background: #fffaf0; }
+    .chain-no { color: var(--muted); font: 10px var(--mono); }
+    .chain-card b { display: block; margin-top: 5px; font-size: 12px; line-height: 1.35; }
+    .chain-card span:last-child { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.35; }
+    .fact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .fact-box { border-top: 2px solid var(--line-strong); padding-top: 8px; }
+    .fact-box h4 { color: var(--muted); font-size: 11px; font-weight: 550; }
+    .fact-box p { margin-top: 4px; font-size: 12px; line-height: 1.5; }
+    .fact-box.hypothesis { border-color: #c49b47; }
+    .fact-box.hypothesis h4 { color: var(--amber); }
+    .window-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 17px; }
+    .window-actions .action-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .window-actions .button { min-height: 34px; padding: 6px 10px; font-size: 12px; }
+    .window-note { color: var(--muted); font-size: 11px; }
+    .log-intro { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin-bottom: 10px; }
+    .log-title { font-size: 14px; font-weight: 650; }
+    .log-subtitle { margin-top: 2px; color: var(--muted); font-size: 11px; }
+    .log-code {
+      margin: 0;
+      overflow: auto;
+      border: 1px solid #d3dcd4;
+      border-radius: 7px;
+      background: #202a28;
+      color: #e8f1e9;
+      padding: 13px 14px;
+      font: 11px/1.7 var(--mono);
+      white-space: pre;
+    }
+    .log-code .warn { color: #f4cc76; }
+    .log-code .fail { color: #f39d91; }
+    .log-code .dim { color: #9aaea0; }
+    .log-details { margin-top: 10px; }
+    .log-details summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; color: var(--blue); font-size: 12px; }
+    .log-details summary::marker { color: var(--blue); }
+    .log-details[open] summary { margin-bottom: 10px; }
+    .log-annotation { margin-top: 10px; border-left: 2px solid #c49b47; padding-left: 10px; color: var(--muted); font-size: 11px; }
+    .log-actions { display: flex; gap: 8px; margin-top: 13px; }
+    .log-actions .button { min-height: 32px; padding: 5px 9px; font-size: 11px; }
+    .solution-intro { color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .solution-layout { display: grid; grid-template-columns: minmax(150px, .82fr) minmax(0, 1.45fr); gap: 15px; margin-top: 13px; min-height: 0; }
+    .solution-list { display: grid; align-content: start; gap: 6px; }
+    .solution-option { width: 100%; text-align: left; border: 1px solid var(--line); border-radius: 6px; background: #fffefa; padding: 9px 10px; }
+    .solution-option:hover { border-color: #8ba991; background: #fbfefa; }
+    .solution-option[aria-pressed="true"] { border-color: var(--green); background: var(--green-soft); box-shadow: inset 3px 0 var(--green); }
+    .solution-option-top { display: flex; align-items: center; gap: 8px; }
+    .solution-letter { width: 20px; color: var(--green); font: 700 15px Georgia, serif; }
+    .solution-option b { font-size: 12px; font-weight: 650; }
+    .solution-option small { display: block; margin: 3px 0 0 28px; color: var(--muted); font-size: 10px; line-height: 1.4; }
+    .solution-detail { min-width: 0; border: 1px solid #cfdad1; border-radius: 7px; background: #fbfdf9; padding: 13px 14px; }
+    .detail-heading { display: flex; align-items: start; justify-content: space-between; gap: 10px; }
+    .detail-heading h3 { font-size: 15px; }
+    .detail-rationale { margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 13px; margin: 12px 0; }
+    .detail-item { border-top: 1px solid var(--line); padding-top: 6px; }
+    .detail-item b { display: block; color: var(--muted); font-size: 10px; font-weight: 550; }
+    .detail-item p { margin-top: 3px; font-size: 11px; line-height: 1.4; }
+    .code-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; color: var(--muted); font-size: 10px; }
+    .snippet { max-height: 130px; overflow: auto; margin: 0; border-radius: 6px; background: #26322f; color: #e9f2e9; padding: 10px 11px; font: 10px/1.55 var(--mono); white-space: pre-wrap; }
+    .detail-actions { margin-top: 10px; display: flex; justify-content: flex-end; }
+    .detail-actions .button { min-height: 32px; padding: 5px 10px; font-size: 11px; }
+    .decision-top { border-left: 3px solid var(--green); background: var(--green-soft); padding: 11px 12px; }
+    .decision-top .label { color: var(--muted); font-size: 10px; }
+    .decision-top h3 { margin-top: 2px; color: var(--green); font-size: 14px; }
+    .decision-top p { margin-top: 4px; color: #456256; font-size: 11px; line-height: 1.4; }
+    .field { display: block; margin: 13px 0 6px; color: var(--muted); font-size: 11px; }
+    select, textarea { width: 100%; border: 1px solid var(--line-strong); border-radius: 6px; background: white; padding: 8px 10px; }
+    select { min-height: 36px; }
+    textarea { min-height: 66px; resize: vertical; font-size: 12px; line-height: 1.5; }
+    .decision-error { min-height: 18px; margin-top: 5px; color: var(--red); font-size: 11px; }
+    .decision-submit { width: 100%; margin-top: 3px; }
+    .decision-foot { margin-top: 10px; color: var(--muted); font-size: 10px; line-height: 1.4; }
+    .decision-result { display: none; margin-top: 10px; border: 1px solid #c9dbcd; border-radius: 6px; background: #f2faf3; padding: 9px 10px; color: var(--green); font-size: 11px; }
+    .decision-result.is-visible { display: block; animation: fade-in .3s ease both; }
+    .resize-handle { position: absolute; right: 2px; bottom: 2px; width: 18px; height: 18px; cursor: nwse-resize; opacity: .45; }
+    .resize-handle::before, .resize-handle::after { content: ""; position: absolute; right: 3px; bottom: 3px; border-bottom: 1px solid var(--green); border-right: 1px solid var(--green); }
+    .resize-handle::before { width: 7px; height: 7px; }
+    .resize-handle::after { width: 12px; height: 12px; }
+    .stage-legend { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 13px; color: var(--muted); font-size: 11px; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .legend-dot.blue { background: var(--blue); }
+    .legend-dot.amber { background: #c49b47; }
+    .legend-dot.red { background: var(--red); }
+    .artifact-footer { border-top: 1px solid var(--line); margin-top: 30px; padding-top: 17px; color: var(--muted); font-size: 11px; line-height: 1.7; overflow-wrap: anywhere; }
+    .artifact-footer strong { color: var(--ink); font-weight: 600; }
+    .artifact-footer a { color: var(--blue); text-underline-offset: 3px; }
+    @keyframes chain-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 1050px) {
+      .hero { grid-template-columns: 1fr; gap: 23px; }
+      .hero-aside { max-width: 560px; }
+      .demo-stage { min-height: 1000px; }
+      [data-window="cause"] { width: 55%; height: 40%; }
+      [data-window="logs"] { width: 40%; height: 41%; }
+      [data-window="solutions"] { width: 65%; height: 47%; }
+      [data-window="decision"] { width: 32%; height: 39%; }
+    }
+    @media (max-width: 780px) {
+      .topbar { padding: 0 16px; }
+      .top-status { display: none; }
+      main { padding: 0 16px 38px; }
+      .hero { padding: 49px 0 25px; gap: 19px; }
+      .hero-description { font-size: 14px; }
+      .rail { grid-template-columns: 1fr 1fr; }
+      .demo-stage { min-height: 0; overflow: visible; padding: 89px 10px 12px; background: #dfe9df; }
+      .stage-head { top: 15px; left: 15px; right: 15px; align-items: start; }
+      .stage-head .button { font-size: 10px; }
+      .stage-status { top: 53px; left: 15px; right: 15px; }
+      .demo-window { position: relative !important; inset: auto !important; width: 100% !important; height: auto !important; min-height: 0; margin: 11px 0; z-index: auto !important; }
+      .window-body { overflow: visible; }
+      .resize-handle { display: none; }
+      .cause-chain { grid-template-columns: 1fr; gap: 6px; }
+      .chain-card { min-height: 0; padding: 10px; }
+      .chain-card:not(:last-child)::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: -15px; font-size: 18px; }
+      .fact-grid, .detail-grid { grid-template-columns: 1fr; }
+      .solution-layout { grid-template-columns: 1fr; }
+      .solution-list { grid-template-columns: 1fr 1fr; }
+      .solution-option small { margin-left: 0; }
+      .stage-legend { margin-bottom: 2px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">W/</span>
+      <div><span class="brand-name">WIN AGENT OS</span><small class="brand-sub">ISSUE DECISION · PRODUCT DEMO V4</small></div>
+    </div>
+    <div class="top-status">离线交互演示 · 不执行修复</div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <p class="eyebrow">Issue to decision / auth.login</p>
+        <h1 id="page-title">先解释错误<em>怎么发生</em>，<br>再把决定交给你。</h1>
+        <p class="hero-description"><strong>客户登录异常</strong> 被监控捕获后，工作台先给出一条可读的错误路径，再把折叠日志、五条完整解决路线和风险前提放到不同窗口。最后由人决定，不把建议冒充执行。</p>
+        <div class="hero-actions">
+          <button class="button primary" data-action="start">开始解释这个问题</button>
+          <button class="button" data-action="reset-demo">重置演示</button>
+        </div>
+        <p class="case-meta">CASE OPS-001 · auth.login · status=fail · 3 个渠道出现相似信号 · 升级后时间接近 · 本地模拟数据</p>
+      </div>
+      <aside class="hero-aside">
+        <strong>这不是自动修复流水线</strong>
+        监控、证据、Eve 简报和历史记录属于工作台；执行必须经过人工授权，由负责团队在 App 外完成。日志中的根因路径是待验证假设。
+      </aside>
+    </section>
+
+    <nav class="rail" aria-label="问题处理步骤">
+      <div class="rail-step is-active" data-rail="1"><span>01</span>预解释错误路径</div>
+      <div class="rail-step" data-rail="2"><span>02</span>展开详细日志</div>
+      <div class="rail-step" data-rail="3"><span>03</span>比较五条方案</div>
+      <div class="rail-step" data-rail="4"><span>04</span>等待你的决定</div>
+    </nav>
+
+    <section class="demo-stage" id="demo-stage" aria-label="客户登录异常多窗口产品演示">
+      <svg class="wallpaper" viewBox="0 0 1400 900" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 0H1400V900H0Z" fill="#dfe9df"/>
+        <path d="M0 250C240 80 480 120 700 270S1130 410 1400 205V900H0Z" fill="#d3e1d2"/>
+        <path d="M0 630C260 470 440 490 680 640S1130 820 1400 600V900H0Z" fill="#c6d9c6"/>
+        <path d="M-80 785C160 600 345 645 505 800S910 1030 1120 785 1320 650 1510 760" fill="none" stroke="#afc8b3" stroke-width="2" opacity=".75"/>
+        <path d="M40 160H1360M40 430H1360M40 700H1360" stroke="#b7cdb9" stroke-width="1" stroke-dasharray="3 12" opacity=".55"/>
+      </svg>
+      <div class="stage-head">
+        <div class="stage-head-left">
+          <span class="stage-code">LIVE STORYBOARD / OPS-001</span>
+          <span class="badge red">问题：客户登录异常</span>
+          <span class="badge amber">根因仍待核实</span>
+        </div>
+        <button class="button" data-action="reset-layout">重置窗口布局</button>
+      </div>
+      <p class="stage-status" id="stage-status" role="status" aria-live="polite">准备好：点击「开始解释这个问题」，先看错误如何可能发生。</p>
+
+      <article class="demo-window" data-window="cause" aria-labelledby="cause-title">
+        <div class="window-bar">
+          <span class="window-title" id="cause-title">01 · 错误如何发生</span>
+          <div class="window-tools"><span class="badge amber">路径假设</span></div>
+        </div>
+        <div class="window-body">
+          <p class="window-kicker">pre-explanation / 先把事实与推演分开</p>
+          <p class="window-lead">已观察到：三个渠道在升级后相近时间出现登录失败。<strong>下面路径解释“可能如何发生”，不是已确认根因。</strong></p>
+          <div class="cause-chain" aria-label="可能的错误路径">
+            <div class="chain-card" style="--i:0"><span class="chain-no">01</span><b>用户提交登录</b><span>网页 / 手机 / 客服反馈</span></div>
+            <div class="chain-card" style="--i:1"><span class="chain-no">02</span><b>读取会话缓存</b><span>可能命中旧版本会话</span></div>
+            <div class="chain-card is-hypothesis" style="--i:2"><span class="chain-no">03</span><b>中间件校验失败</b><span>版本或兼容性待核实</span></div>
+            <div class="chain-card is-hypothesis" style="--i:3"><span class="chain-no">04</span><b>返回 401</b><span>刷新凭据可能失败</span></div>
+            <div class="chain-card" style="--i:4"><span class="chain-no">05</span><b>业务入口受阻</b><span>页面能开不等于能下单</span></div>
+          </div>
+          <div class="fact-grid">
+            <section class="fact-box"><h4>已确认事实</h4><p>三个渠道有相似失败信号；时间接近；事件发生在一次升级之后。</p></section>
+            <section class="fact-box hypothesis"><h4>仍需验证</h4><p>是否真是会话版本不兼容；哪些客户受影响；上一稳定版本是否兼容数据。</p></section>
+          </div>
+          <div class="window-actions">
+            <div class="action-group">
+              <button class="button primary" data-action="understand">我理解了，展开详细日志</button>
+              <a class="button" href="../artifacts/auth-login-bug/auth-login-sequence.svg" target="_blank" rel="noopener noreferrer">打开 PR Lens Bug 图</a>
+            </div>
+            <span class="window-note">错误码仅作演示，不代表实时日志。</span>
+          </div>
+        </div>
+        <span class="resize-handle" aria-hidden="true"></span>
+      </article>
+
+      <article class="demo-window" data-window="logs" aria-labelledby="logs-title">
+        <div class="window-bar">
+          <span class="window-title" id="logs-title">02 · 详细错误日志</span>
+          <div class="window-tools"><button class="window-tool" data-action="toggle-logs" aria-controls="log-details" aria-expanded="false">展开日志</button></div>
+        </div>
+        <div class="window-body">
+          <div class="log-intro">
+            <div><p class="log-title">auth.login / request trace</p><p class="log-subtitle">默认折叠 · 脱敏演示日志 · 不连接生产</p></div>
+            <span class="badge red">401</span>
+          </div>
+          <pre class="log-code" aria-label="摘要日志"><code><span class="dim">09:10:14.203</span>  auth.request   POST /api/session
+<span class="dim">09:10:14.219</span>  auth.cache     session hit · age=27m
+<span class="warn">09:10:14.221</span>  auth.check     token schema differs · [待核实]
+<span class="fail">09:10:14.224</span>  auth.response  401 SESSION_VERSION_MISMATCH
+<span class="fail">09:10:14.226</span>  ui.login       refresh failed · retry=1</code></pre>
+          <details class="log-details" id="log-details">
+            <summary><span>展开完整请求、响应和关联事件</span><span class="mono small" data-log-label>默认折叠</span></summary>
+            <pre class="log-code"><code><span class="dim">request_id=demo-7f3a · user_id=[redacted]</span>
+09:10:14.203  request.headers  x-client=web · release=2026.09
+09:10:14.219  cache.lookup     key=session:[redacted] · hit=true
+09:10:14.221  middleware        expected=v3 · received=v2
+09:10:14.224  response          status=401 · code=SESSION_VERSION_MISMATCH
+09:10:14.226  refresh           refresh_token=[redacted] · result=failed
+09:10:14.231  ui                 login_form remains visible
+09:11:02.109  mobile             same symptom observed
+09:12:18.991  support            similar customer report
+<span class="warn">note               timestamps and code are illustrative</span></code></pre>
+            <p class="log-annotation">证据边界：源快照心跳不是本次登录的实际执行时间；缓存异常不能直接证明当前所有客户都无法登录。</p>
+          </details>
+          <div class="log-actions">
+            <button class="button" data-action="copy-logs">复制演示日志</button>
+            <button class="button primary" data-action="show-solutions">查看五条完整方案</button>
+          </div>
+        </div>
+        <span class="resize-handle" aria-hidden="true"></span>
+      </article>
+
+      <article class="demo-window" data-window="solutions" aria-labelledby="solutions-title">
+        <div class="window-bar">
+          <span class="window-title" id="solutions-title">03 · 五条完整解决路线</span>
+          <div class="window-tools"><span class="badge blue">彼此独立</span></div>
+        </div>
+        <div class="window-body">
+          <p class="solution-intro">每条路线都有短标题、适用前提、风险、验收和示意代码。它们不是必须依次执行的五个步骤；先选一条，再由人决定。</p>
+          <div class="solution-layout">
+            <div class="solution-list" id="solution-list" role="list" aria-label="五条解决路线"></div>
+            <section class="solution-detail" aria-live="polite" aria-label="当前方案详细说明">
+              <div class="detail-heading"><div><h3 id="detail-title"></h3><p class="detail-rationale" id="detail-rationale"></p></div><span class="badge blue" id="detail-badge">当前试选</span></div>
+              <div class="detail-grid">
+                <div class="detail-item"><b>适用前提</b><p id="detail-when"></p></div>
+                <div class="detail-item"><b>主要风险</b><p id="detail-risk"></p></div>
+                <div class="detail-item"><b>业务验收</b><p id="detail-accept"></p></div>
+                <div class="detail-item"><b>退出与回退</b><p id="detail-fallback"></p></div>
+              </div>
+              <div class="code-label"><span>示意代码 · 执行前必须评审</span><span class="mono" id="detail-code-kind">illustrative</span></div>
+              <pre class="snippet"><code id="detail-code"></code></pre>
+              <div class="detail-actions"><button class="button primary" data-action="ask-decision">交给用户决定</button></div>
+            </section>
+          </div>
+        </div>
+        <span class="resize-handle" aria-hidden="true"></span>
+      </article>
+
+      <article class="demo-window" data-window="decision" aria-labelledby="decision-title">
+        <div class="window-bar">
+          <span class="window-title" id="decision-title">04 · 你的决定</span>
+          <div class="window-tools"><span class="badge green">人工闸门</span></div>
+        </div>
+        <div class="window-body">
+          <div class="decision-top"><span class="label">当前选择</span><h3 id="decision-plan">恢复上一稳定版本</h3><p id="decision-summary">先确认数据兼容，再评估恢复窗口；不满足前提就不执行。</p></div>
+          <label class="field" for="decision-choice">你的决定</label>
+          <select id="decision-choice">
+            <option value="adopt">采纳建议</option>
+            <option value="defer">暂缓决定</option>
+            <option value="reject">不采用</option>
+          </select>
+          <label class="field" for="decision-reason">为什么这样决定？</label>
+          <textarea id="decision-reason" maxlength="1000" placeholder="写下取舍、前提或需要补充的证据。"></textarea>
+          <p class="decision-error" id="decision-error" aria-live="polite"></p>
+          <button class="button primary decision-submit" data-action="save-decision">确认保存决定</button>
+          <p class="decision-foot">只保存本地演示记录。不调用 API、不写 SQLite、不执行修复。</p>
+          <div class="decision-result" id="decision-result" role="status"></div>
+        </div>
+        <span class="resize-handle" aria-hidden="true"></span>
+      </article>
+    </section>
+
+    <div class="stage-legend" aria-label="颜色说明">
+      <span class="legend-item"><i class="legend-dot blue"></i>工作台可展示与记录</span>
+      <span class="legend-item"><i class="legend-dot amber"></i>待核实前提 / 人工闸门</span>
+      <span class="legend-item"><i class="legend-dot red"></i>业务影响或失败信号</span>
+      <span class="muted">拖动标题栏移动窗口；拖右下角调整大小；手机端自动改为单列。</span>
+    </div>
+
+    <footer class="artifact-footer">
+      <strong>本地原创 product demo V4</strong> · 来源项目：/Users/liushiyuwin/projects/win-agent-ops-eve · Pi session ID: 01a089d4-7ce3-7578-abec-949c3ac21870<br>
+      设计目的：解释一个由 ops app 捕获的问题如何从证据走到人工决定。所有日志、方案和代码均为脱敏演示内容；真实工作台仍在 <a href="http://127.0.0.1:8766/">http://127.0.0.1:8766/</a>。
+    </footer>
+  </main>
+
+  <script>
+    'use strict';
+    const STORAGE = 'win-agent-ops-product-demo-v4';
+    const LAYOUT_STORAGE = STORAGE + ':layout';
+    const solutions = [
+      {
+        id: 'middleware', letter: 'A', title: '修复认证中间件', short: '修根因，保留当前功能',
+        rationale: '针对可能的会话版本校验错误，补齐兼容迁移与刷新失败处理。适合已经复现问题、原因证据足够时。',
+        when: '能稳定复现版本差异，并确认新旧会话迁移规则。',
+        risk: '修改认证入口可能扩大影响；错误迁移会让更多旧会话失效。',
+        accept: '网页、手机都能登录，并完成一次关键业务流程。',
+        fallback: '先用开关限制范围；修复未通过验收就回退中间件版本。',
+        code: `const session = await sessionStore.read(request);\n\nif (!session || session.expiresAt <= now) {\n  return refreshOr401(request);\n}\n\nif (session.schemaVersion !== CURRENT_SCHEMA) {\n  return migrateOr401(session);\n}\n\nreturn allow(session);`
+      },
+      {
+        id: 'rollback', letter: 'B', title: '恢复上一稳定版本', short: '先回到已验证状态',
+        rationale: '如果上一版本仍可用且数据兼容，恢复旧版本可能比继续定位更快；兼容性不成立时不选这条路线。',
+        when: '上一稳定版本可用，数据兼容，恢复窗口和负责人已确认。',
+        risk: '近期新功能暂时不可用；切换期间可能再次短暂中断。',
+        accept: '客户能登录并完成下单，业务负责人确认关键流程可用。',
+        fallback: '兼容性检查失败立即停止；验收失败按预先批准的回退方案处理。',
+        code: `if (!isCompatible(snapshot, previousRelease)) {\n  throw new Error('STOP: compatibility check failed');\n}\n\ndeploy(previousRelease);\nsmokeTest(['login', 'checkout']);\n\nif (!businessOwner.accepted()) rollback();`
+      },
+      {
+        id: 'failover', letter: 'C', title: '切换备用认证服务', short: '绕开故障，保住线上入口',
+        rationale: '把认证请求暂时转到已存在的备用服务，适合主服务故障明确、备用容量和同步状态已核实的情况。',
+        when: '备用服务可用，容量、数据同步和回切方式都已验证。',
+        risk: '身份状态不同步、容量不足或双写差异，可能造成新的登录问题。',
+        accept: '备用服务上登录成功，关键业务身份与数据保持一致。',
+        fallback: '保留原服务现场；备用验收不通过就回切，不扩大流量。',
+        code: `const provider = await health(primary)\n  ? primary\n  : backup;\n\nconst result = await provider.authenticate(credentials);\n\nif (!result.ok) {\n  record('auth-failover-rejected');\n  stopTrafficShift();\n}`
+      },
+      {
+        id: 'manual', letter: 'D', title: '人工受理紧急业务', short: '先保障紧急客户',
+        rationale: '不等待系统立即修好，先把紧急订单送进人工队列。它是业务保障路线，不是认证修复。',
+        when: '紧急业务可识别，客服和运营有能力承接并逐笔对账。',
+        risk: '处理量有限，人工耗时和重复处理风险上升，系统问题仍存在。',
+        accept: '紧急订单有负责人、状态和交付记录，没有遗漏或重复。',
+        fallback: '系统恢复后逐笔对账，关闭临时入口，不把人工记录当系统恢复。',
+        code: `if (loginUnavailable && order.isUrgent) {\n  manualQueue.add({\n    orderId: order.id,\n    owner: 'operations',\n    audit: 'required'\n  });\n}`
+      },
+      {
+        id: 'rebuild', letter: 'E', title: '隔离重建后替换', short: '在独立环境验证再切换',
+        rationale: '把当前故障环境和修复验证隔开，适合原因复杂、需要较完整验收、不能继续直接改线上环境的情况。',
+        when: '能准备独立环境、数据副本和完整的登录与下单验收。',
+        risk: '准备周期较长；迁移、数据差异和切换窗口都需要额外验证。',
+        accept: '候选环境通过关键业务验收，切换后数据和客户流程一致。',
+        fallback: '候选环境验收失败不切流；保留原环境继续调查。',
+        code: `const candidate = await buildIsolated(snapshot);\nconst checks = await verify(candidate, [\n  'login', 'checkout', 'session-refresh'\n]);\n\nif (checks.ok) await swapTraffic(candidate);\nelse await preserveForInvestigation(candidate);`
+      }
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    const windows = [...document.querySelectorAll('.demo-window')];
+    const railSteps = [...document.querySelectorAll('[data-rail]')];
+    let selected = 'rollback';
+    let currentStep = 1;
+    let interaction = null;
+    let zIndex = 6;
+
+    function selectedSolution() {
+      return solutions.find((item) => item.id === selected) || solutions[1];
+    }
+    function setStatus(message) {
+      $('stage-status').textContent = message;
+    }
+    function setStep(step) {
+      currentStep = Math.max(currentStep, step);
+      railSteps.forEach((node) => {
+        const value = Number(node.dataset.rail);
+        node.classList.toggle('is-active', value === currentStep);
+        node.classList.toggle('is-done', value < currentStep);
+      });
+    }
+    function focusWindow(name) {
+      const target = document.querySelector(`[data-window="${name}"]`);
+      if (!target) return;
+      zIndex += 1;
+      target.style.zIndex = String(zIndex);
+      windows.forEach((node) => node.classList.toggle('is-focused', node === target));
+      target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    function renderSolution() {
+      const item = selectedSolution();
+      $('solution-list').replaceChildren(...solutions.map((solution) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'solution-option';
+        button.dataset.solution = solution.id;
+        button.setAttribute('aria-pressed', String(solution.id === selected));
+        const top = document.createElement('span');
+        top.className = 'solution-option-top';
+        const letter = document.createElement('span');
+        letter.className = 'solution-letter';
+        letter.textContent = solution.letter;
+        const title = document.createElement('b');
+        title.textContent = solution.title;
+        top.append(letter, title);
+        const short = document.createElement('small');
+        short.textContent = solution.short;
+        button.append(top, short);
+        button.addEventListener('click', () => {
+          selected = solution.id;
+          renderSolution();
+          renderDecision();
+          focusWindow('solutions');
+          setStep(3);
+          setStatus(`已试选方案 ${solution.letter}「${solution.title}」。请查看前提、风险和示意代码，再决定。`);
+        });
+        return button;
+      }));
+      $('detail-title').textContent = `${item.letter} · ${item.title}`;
+      $('detail-rationale').textContent = item.rationale;
+      $('detail-when').textContent = item.when;
+      $('detail-risk').textContent = item.risk;
+      $('detail-accept').textContent = item.accept;
+      $('detail-fallback').textContent = item.fallback;
+      $('detail-code').textContent = item.code;
+      $('detail-badge').textContent = item.id === 'rollback' ? '默认优先评估' : '当前试选';
+    }
+    function renderDecision() {
+      const item = selectedSolution();
+      $('decision-plan').textContent = `${item.letter} · ${item.title}`;
+      $('decision-summary').textContent = item.rationale;
+      $('decision-result').classList.remove('is-visible');
+      $('decision-error').textContent = '';
+    }
+    function openLogs() {
+      const details = $('log-details');
+      details.open = true;
+      const button = document.querySelector('[data-action="toggle-logs"]');
+      button.textContent = '折叠日志';
+      button.setAttribute('aria-expanded', 'true');
+      document.querySelector('[data-log-label]').textContent = '已展开';
+      focusWindow('logs');
+      setStep(2);
+      setStatus('详细日志已展开。黄色内容是待核实路径，不是最终根因。');
+    }
+    function showSolutions() {
+      focusWindow('solutions');
+      setStep(3);
+      setStatus('五条完整路线已就绪。点击任一短标题，查看完整解释和示意代码。');
+    }
+    function askDecision() {
+      focusWindow('decision');
+      setStep(4);
+      $('decision-choice').focus({ preventScroll: true });
+      setStatus(`现在轮到你决定：${selectedSolution().title}。采纳只保存决定，不执行修复。`);
+    }
+    function saveDecision() {
+      const reason = $('decision-reason').value.trim();
+      if (!reason) {
+        $('decision-error').textContent = '请写下选择理由，再保存决定。';
+        $('decision-reason').focus();
+        return;
+      }
+      const choice = $('decision-choice').selectedOptions[0].textContent;
+      const item = selectedSolution();
+      const record = { solution: item.id, choice, reason, at: new Date().toISOString(), demo: true };
+      try { localStorage.setItem(STORAGE + ':decision', JSON.stringify(record)); } catch {}
+      $('decision-error').textContent = '';
+      $('decision-result').textContent = `已保存本地演示决定：${choice} · ${item.title}。未调用 API，未执行修复。`;
+      $('decision-result').classList.add('is-visible');
+      setStatus('决定已留痕。真实执行仍需独立授权、负责团队和业务验收。');
+    }
+    function resetDemo() {
+      selected = 'rollback';
+      currentStep = 1;
+      $('decision-reason').value = '';
+      $('decision-choice').value = 'adopt';
+      $('log-details').open = false;
+      const toggle = document.querySelector('[data-action="toggle-logs"]');
+      toggle.textContent = '展开日志';
+      toggle.setAttribute('aria-expanded', 'false');
+      document.querySelector('[data-log-label]').textContent = '默认折叠';
+      windows.forEach((node) => node.classList.remove('is-focused'));
+      renderSolution();
+      renderDecision();
+      setStep(1);
+      setStatus('准备好：点击「开始解释这个问题」，先看错误如何可能发生。');
+      try { localStorage.removeItem(STORAGE + ':decision'); } catch {}
+    }
+    function resetLayout() {
+      windows.forEach((node) => {
+        node.style.left = '';
+        node.style.top = '';
+        node.style.right = '';
+        node.style.bottom = '';
+        node.style.width = '';
+        node.style.height = '';
+      });
+      try { localStorage.removeItem(LAYOUT_STORAGE); } catch {}
+      setStatus('窗口布局已恢复。核心内容仍可用，不依赖拖动或缩放。');
+    }
+    function saveLayout() {
+      const stage = $('demo-stage').getBoundingClientRect();
+      const result = {};
+      windows.forEach((node) => {
+        const rect = node.getBoundingClientRect();
+        result[node.dataset.window] = {
+          left: rect.left - stage.left,
+          top: rect.top - stage.top,
+          width: rect.width,
+          height: rect.height
+        };
+      });
+      try { localStorage.setItem(LAYOUT_STORAGE, JSON.stringify(result)); } catch {}
+    }
+    function restoreLayout() {
+      if (window.matchMedia('(max-width: 780px)').matches) return;
+      try {
+        const saved = JSON.parse(localStorage.getItem(LAYOUT_STORAGE) || 'null');
+        if (!saved) return;
+        const stage = $('demo-stage').getBoundingClientRect();
+        windows.forEach((node) => {
+          const value = saved[node.dataset.window];
+          if (!value) return;
+          const maxLeft = Math.max(0, stage.width - value.width);
+          const maxTop = Math.max(80, stage.height - value.height);
+          node.style.left = `${Math.min(maxLeft, Math.max(0, value.left))}px`;
+          node.style.top = `${Math.min(maxTop, Math.max(80, value.top))}px`;
+          node.style.right = 'auto';
+          node.style.bottom = 'auto';
+          node.style.width = `${Math.min(stage.width - 20, Math.max(280, value.width))}px`;
+          node.style.height = `${Math.min(stage.height - 90, Math.max(210, value.height))}px`;
+        });
+      } catch {}
+    }
+    function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
+    function beginWindowInteraction(event, node, mode) {
+      if (window.matchMedia('(max-width: 780px)').matches) return;
+      if (event.button !== undefined && event.button !== 0) return;
+      if (mode === 'drag' && event.target.closest('button, a, input, select, textarea')) return;
+      const stage = $('demo-stage').getBoundingClientRect();
+      const rect = node.getBoundingClientRect();
+      focusWindow(node.dataset.window);
+      interaction = {
+        node,
+        mode,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        left: rect.left - stage.left,
+        top: rect.top - stage.top,
+        width: rect.width,
+        height: rect.height,
+        stage
+      };
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+      event.preventDefault();
+    }
+    function moveWindow(event) {
+      if (!interaction || event.pointerId !== interaction.pointerId) return;
+      const x = event.clientX - interaction.startX;
+      const y = event.clientY - interaction.startY;
+      const node = interaction.node;
+      if (interaction.mode === 'drag') {
+        const left = clamp(interaction.left + x, 0, interaction.stage.width - node.offsetWidth);
+        const top = clamp(interaction.top + y, 80, interaction.stage.height - node.offsetHeight);
+        node.style.left = `${left}px`;
+        node.style.top = `${top}px`;
+        node.style.right = 'auto';
+        node.style.bottom = 'auto';
+      } else {
+        const width = clamp(interaction.width + x, 280, interaction.stage.width - interaction.left - 12);
+        const height = clamp(interaction.height + y, 210, interaction.stage.height - interaction.top - 12);
+        node.style.width = `${width}px`;
+        node.style.height = `${height}px`;
+        node.style.right = 'auto';
+        node.style.bottom = 'auto';
+      }
+    }
+    function endWindowInteraction() {
+      if (!interaction) return;
+      saveLayout();
+      interaction = null;
+    }
+
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-action]');
+      if (!button) return;
+      const action = button.dataset.action;
+      if (action === 'start') {
+        document.body.classList.add('is-running');
+        setStatus('错误路径已展开：先看可能发生什么，再决定要不要打开完整日志。');
+        focusWindow('cause');
+      }
+      if (action === 'understand') openLogs();
+      if (action === 'toggle-logs') {
+        if ($('log-details').open) {
+          $('log-details').open = false;
+          button.textContent = '展开日志';
+          button.setAttribute('aria-expanded', 'false');
+          document.querySelector('[data-log-label]').textContent = '默认折叠';
+          setStatus('详细日志已折叠。摘要仍保留，根因仍待核实。');
+        } else openLogs();
+      }
+      if (action === 'copy-logs') {
+        const text = $('log-details').querySelector('code').textContent;
+        if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).catch(() => {});
+        setStatus('演示日志已复制（若浏览器允许剪贴板）。');
+      }
+      if (action === 'show-solutions') showSolutions();
+      if (action === 'ask-decision') askDecision();
+      if (action === 'save-decision') saveDecision();
+      if (action === 'reset-demo') resetDemo();
+      if (action === 'reset-layout') resetLayout();
+    });
+    document.querySelector('[data-window="decision"]').addEventListener('change', (event) => {
+      if (event.target.id !== 'decision-choice') return;
+      setStatus(`决定选项已改为「${event.target.selectedOptions[0].textContent}」。还需要填写理由。`);
+    });
+    windows.forEach((node) => {
+      const bar = node.querySelector('.window-bar');
+      const handle = node.querySelector('.resize-handle');
+      bar.addEventListener('pointerdown', (event) => beginWindowInteraction(event, node, 'drag'));
+      handle.addEventListener('pointerdown', (event) => beginWindowInteraction(event, node, 'resize'));
+      [bar, handle].forEach((target) => {
+        target.addEventListener('pointermove', moveWindow);
+        target.addEventListener('pointerup', endWindowInteraction);
+        target.addEventListener('pointercancel', endWindowInteraction);
+        target.addEventListener('lostpointercapture', endWindowInteraction);
+      });
+    });
+    window.addEventListener('resize', () => {
+      if (window.matchMedia('(max-width: 780px)').matches) {
+        windows.forEach((node) => { node.style.cssText = ''; });
+      }
+    });
+    renderSolution();
+    renderDecision();
+    restoreLayout();
+  </script>
+</body>
+</html>
