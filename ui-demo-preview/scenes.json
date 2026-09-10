@@ -1,0 +1,58 @@
+{
+  "title": "业务异常，如何决策",
+  "source": "/Users/liushiyuwin/projects/win-agent-ops-eve",
+  "session": "01a084cc-de97-753a-a75e-e774a797b955",
+  "stage": "mockup-awaiting-approval",
+  "scenes": [
+    {
+      "id": "impact",
+      "button": "业务影响",
+      "title": "先判断业务影响",
+      "goal": "领导先看影响与紧急程度，不看代码或错误码。",
+      "action": "选择客户登录异常，更新业务影响与建议区域。",
+      "subtitle": "先看业务受阻，再决定如何处理",
+      "duration_seconds": 6,
+      "svg": "scenes/01-entry.svg"
+    },
+    {
+      "id": "triage",
+      "button": "原因判断",
+      "title": "事实与推测分开",
+      "goal": "避免把相关性当根因，把未知项公开。",
+      "action": "展开原因判断，查看已确认、倾向和待核实。",
+      "subtitle": "哪些已确认，哪些还不知道",
+      "duration_seconds": 6,
+      "svg": "scenes/02-context.svg"
+    },
+    {
+      "id": "options",
+      "button": "独立方案",
+      "title": "比较五条独立路线",
+      "goal": "每条方案都能独立选择，明确收益、前提与代价。",
+      "action": "选择一个备选方案；后续建议围绕该方案展示。",
+      "subtitle": "备选方案不是执行步骤",
+      "duration_seconds": 6,
+      "svg": "scenes/03-action.svg"
+    },
+    {
+      "id": "recommendation",
+      "button": "形成建议",
+      "title": "推荐理由与授权取舍",
+      "goal": "明确推荐为什么成立，以及领导要确认什么。",
+      "action": "查看推荐方案B的条件，形成待审批建议。",
+      "subtitle": "先明确取舍，再决定是否授权",
+      "duration_seconds": 6,
+      "svg": "scenes/04-result.svg"
+    },
+    {
+      "id": "history",
+      "button": "决策留痕",
+      "title": "记录建议，不冒充执行",
+      "goal": "保留方案与理由，处理结果等待真实反馈。",
+      "action": "查看建议记录、执行前提和未执行状态。",
+      "subtitle": "选择可追溯，执行另有授权",
+      "duration_seconds": 6,
+      "svg": "scenes/05-proof.svg"
+    }
+  ]
+}
