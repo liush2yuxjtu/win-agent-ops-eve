@@ -1,0 +1,27 @@
+# Private runtime data and generated artifacts stay local.
+.pr-lens/
+data/
+artifacts/
+verification/
+research/
+history.*
+FINDINGS.md
+decisions.tsv
+node_modules/
+.eve/
+runs/
+__pycache__/
+*.py[cod]
+*.sqlite*
+*.db
+*.log
+*.pid
+.env
+.env.*
+!.env.example
+.ops-token
+*credentials*
+*.pem
+*.key
+.DS_Store
+web/app.js

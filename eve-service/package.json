@@ -1,0 +1,21 @@
+{
+  "name": "eve-service",
+  "version": "1.0.0",
+  "description": "win-agent-os 的独立中文证据诊断服务",
+  "private": true,
+  "scripts": {
+    "build": "eve build",
+    "dev": "bash start-dev.sh",
+    "test": "eve eval --strict",
+    "quality": "node evals/compare.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@ai-sdk/openai": "4.0.62",
+    "eve": "0.38.3",
+    "zod": "4.5.4"
+  }
+}
