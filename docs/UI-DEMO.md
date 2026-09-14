@@ -1,6 +1,6 @@
 # 真实应用 UI Demo
 
-最新真实录像位于 `artifacts/real-app-demo-v2/real-app.mp4`。
+最新真实录像位于 `tools/real-ui-demo/artifacts/real-app-demo-v2/real-app.mp4`；本机交付副本为 `artifacts/real-app-demo-v2/real-app.mp4`。
 
 - 时长：59.166 秒
 - 画面：1440×1000
@@ -24,12 +24,12 @@
 
 ## 证据
 
-- `artifacts/real-app-demo-v2/proof.json`：真实 URL、前端 hash、Eve session、诊断版本、SQLite 指标和边界。
-- `artifacts/real-app-demo-v2/ffprobe.json`：远端 FFmpeg 输出元数据。
-- `artifacts/real-app-demo-v2/chapters.json`：由运行时标记生成的章节。
-- `artifacts/real-app-demo-v2/contact.png`：全片 contact sheet。
-- `artifacts/real-app-demo-v2/strip-*.png`：主要交互区间帧条。
-- `artifacts/real-app-demo-v2/QA.json`：画面检查结论。
+- `tools/real-ui-demo/artifacts/real-app-demo-v2/proof.json`：真实 URL、前端 hash、Eve session、诊断版本、SQLite 指标和边界。
+- `tools/real-ui-demo/artifacts/real-app-demo-v2/ffprobe.json`：远端 FFmpeg 输出元数据。
+- `tools/real-ui-demo/artifacts/real-app-demo-v2/chapters.json`：由运行时标记生成的章节。
+- `tools/real-ui-demo/artifacts/real-app-demo-v2/contact.png`：全片 contact sheet。
+- `tools/real-ui-demo/artifacts/real-app-demo-v2/strip-*.png`：主要交互区间帧条。
+- `tools/real-ui-demo/artifacts/real-app-demo-v2/QA.json`：画面检查结论。
 - `tools/real-ui-demo/BRIEF.md`、`record.mjs`、`finalize.py`：真实录制流程。
 
 ## 边界

@@ -5,7 +5,7 @@
 ## 启动
 
 ```bash
-python3 /Users/liushiyuwin/projects/win-agent-ops-eve/product-demo-v9/start.py
+python3 product-demo-v9/start.py
 ```
 
 打开：`http://127.0.0.1:8772/`

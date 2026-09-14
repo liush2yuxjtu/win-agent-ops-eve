@@ -24,7 +24,8 @@
   "designContract": "docs/PRODUCT-DEMO-DESIGN.md",
   "decisionTrail": "decisions.tsv",
   "uiDemo": {
-    "path": "artifacts/real-app-demo-v2/real-app.mp4",
+    "path": "tools/real-ui-demo/artifacts/real-app-demo-v2/real-app.mp4",
+    "convenienceCopy": "artifacts/real-app-demo-v2/real-app.mp4",
     "durationSeconds": 59.166016,
     "dimensions": "1440x1000",
     "realAppRecording": true,
@@ -41,8 +42,8 @@
       "5 条路线展示 Blast Radius 并由人应用决定"
     ],
     "rehearsalAndVisualQA": "passed",
-    "proof": "artifacts/real-app-demo-v2/proof.json",
-    "chapters": "artifacts/real-app-demo-v2/chapters.json",
+    "proof": "tools/real-ui-demo/artifacts/real-app-demo-v2/proof.json",
+    "chapters": "tools/real-ui-demo/artifacts/real-app-demo-v2/chapters.json",
     "notes": "真实工作台代码和真实 Eve/CPA 请求；录制决定只写隔离 SQLite，不执行业务修复。",
     "recordingNotes": "docs/REAL-APP-RECORDING.md"
   },

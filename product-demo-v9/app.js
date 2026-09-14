@@ -114,6 +114,11 @@ function typedFeedback() {
 }
 
 function applyFix() {
+  if (state.fixPhase !== 'feedback') {
+    state.status = '请先完成 Probe，再应用路线。';
+    render();
+    return;
+  }
   state.applied = true;
   state.status = 'Mock TUI：人已选择并应用这条路线。没有执行生产修复。';
   render();
@@ -281,9 +286,13 @@ function renderRoutes(parent) {
         cell.append(make('span', null, label), make('p', null, value));
         detail.appendChild(cell);
       });
-      const apply = make('button', 'action ' + (state.applied ? 'ok' : 'primary'), state.applied ? '✓ FIX APPLIED · MOCK' : 'a  APPLY SELECTED FIX');
-      apply.addEventListener('click', applyFix);
-      detail.appendChild(apply);
+      if (state.fixPhase === 'feedback') {
+        const apply = make('button', 'action ' + (state.applied ? 'ok' : 'primary'), state.applied ? '✓ FIX APPLIED · MOCK' : 'a  APPLY SELECTED FIX');
+        apply.addEventListener('click', applyFix);
+        detail.appendChild(apply);
+      } else {
+        detail.appendChild(make('p', 'fix-note', '先完成 Probe，再应用路线。'));
+      }
       row.appendChild(detail);
     }
     list.appendChild(row);
@@ -359,6 +368,7 @@ askDialog.addEventListener('close', () => {
 });
 
 document.addEventListener('keydown', event => {
+  if ($('#ask-question')?.open) return;
   if (['INPUT', 'TEXTAREA'].includes(event.target.tagName)) {
     if (event.key === 'Escape') event.target.blur();
     return;

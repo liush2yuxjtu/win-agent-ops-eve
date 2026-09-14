@@ -30,7 +30,7 @@
 
 ## 录制证据
 
-最新成片：`artifacts/real-app-demo-v2/real-app.mp4`
+最新成片：`tools/real-ui-demo/artifacts/real-app-demo-v2/real-app.mp4`；本机交付副本：`artifacts/real-app-demo-v2/real-app.mp4`
 
 - 时长：59.166 秒
 - 画面：1440×1000
@@ -44,7 +44,7 @@
 - 录制期间人工决定：1 条，未写正式数据库
 - 录制期间处理结果：0 条
 
-`proof.json` 保存实际 URL、health、前端 SHA-256、run ID、session ID、SQLite 前后指标和 marker。`chapters.json` 由实际运行时 marker 生成。`contact.png` 和 `strip-*.png` 已逐张检查。
+`proof.json` 保存实际 URL、health、前端 SHA-256、run ID、session ID、SQLite 前后指标和 marker。`chapters.json` 由实际运行时 marker 生成。`contact.png` 和 `strip-*.png` 已逐张检查。record 模式会在 `run.sh` 完成后自动把最终证据提升到 `artifacts/real-app-demo-v2/`。
 
 ## 固定执行路线
 
@@ -54,7 +54,7 @@
 $HOME/.pi/agent/bin/video-render-macmini --check
 $HOME/.pi/agent/bin/video-render-macmini \
   --project "$PWD/tools/real-ui-demo" \
-  --output artifacts/record \
+  --output artifacts/real-app-demo-v2 \
   -- bash run.sh record
 ```
 

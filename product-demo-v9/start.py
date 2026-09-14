@@ -19,8 +19,12 @@ def healthy():
         if data.get('app') != 'win-agent-ops-mock-tui-v9':
             raise RuntimeError('8772 已被其他服务占用；不会关闭该服务。')
         return True
+    except urllib.error.HTTPError as error:
+        raise RuntimeError('8772 已被其他服务占用且未返回 V9 健康 JSON。') from error
     except urllib.error.URLError:
         return False
+    except json.JSONDecodeError as error:
+        raise RuntimeError('8772 已被其他服务占用且未返回 V9 健康 JSON。') from error
 
 
 if __name__ == '__main__':
