@@ -1,20 +1,33 @@
-# 真实工作台录制
+# 真实工作台三步录制
 
-用户已批准 V3 设计并要求实施后录制真实应用，不录制 product-demo。
+用户已批准 `product-demo-v9` 的三步 Triage Funnel 设计，并要求真实应用采用同一信息流后录制。禁止把 Mock、fixture 或旧 UI 录像当作交付。
 
-目标地址为 Mac mini 的 `http://127.0.0.1:8766/`，经 SSH 反向转发到 MacBook 同端口的真实工作台。不存在 fixture 服务、模拟数据注入、模型替换或浏览器 localStorage 业务存储。后端读取既有监控，诊断通过远端 Eve/CPA，历史写入真实 SQLite。
+## 真实目标
 
-录制只允许新增真实诊断记录。展示方案确认窗口后返回，不保存人为编造的方案决定或处理结果，不执行修复。
+- 应用代码：项目 `web/`，使用真实 Python 工作台和真实 React/json-render bundle。
+- 录制访问：Mac mini 浏览器经专用 SSH 反向转发访问 MacBook 上的真实应用代码。
+- 录制数据库：一次性隔离 SQLite；源监控仍来自真实 `legacy-monitor`，不是 fixture 服务。
+- 模型：真实 Eve/CPA 请求，模型结果不能替换或伪造。
+- 录制允许写入一条隔离数据库中的人工“采纳”决定，用来证明真实 UI 的 Route & Apply；不执行任何业务修复。
 
-六个节拍。
+## 三个节拍
 
-1. 真实事项队列与实际监控状态。选择已有问题，停留四秒。
-2. 点击生成领导简报，显示真实进度。等待片段缩至五秒，并明确标注。
-3. 阅读返回的业务影响和原因判断，停留四秒。
-4. 比较真实生成的独立方案，试选后检查右侧联动，停留四秒。
-5. 打开真实方案确认窗口，查看前提与风险，返回比较而不保存决定。
-6. 打开 SQLite 诊断历史，重新加载后验证刚生成版本仍在，停留五秒。
+1. **TRIAGE**：显示真实问题队列和 P0-P3，原始长日志默认收起。选择 `scaro.auth`，停留三秒。
+2. **PROBE · ONE APPROVAL GATE**：生成真实 Eve 领导简报；打开唯一 `AskUserQuestion`，批准添加探针；真实页面显示读取问题、添加探针、寻找复现、等待人工反馈；点击“问题已复现”。
+3. **ROUTE & APPLY FIX**：查看真实简报中的 5 条路线和 Blast Radius，选择第二条，填写人工理由并点击“应用这条路线（只记录）”；打开真实 SQLite 历史，重载页面确认记录保留。
 
-以 1440×1000 录制，H.264 MP4，无音轨。所有浏览器录制、编码和帧提取经统一 Mac mini 入口。章节按运行时标记生成。
+模型等待只在成片后处理时压缩为五秒，并用字幕说明；所有点击、输入、状态变化原速可见。
 
-discover 只读验证路由、真实 API、控件名称和尺寸。rehearse 执行相同真实流程但不录视频。record 重新执行真实流程。inspect 检查全片和所有主要交互区间，禁止把 API 成功当作画面验收。
+## 规格
+
+- viewport：`1440×1000`
+- 输出：H.264 MP4、`yuv420p`、30 FPS、无音轨
+- browser：Mac mini 已安装的可见 Chrome channel，headless 录制
+- overlay：真实应用、三步流程、唯一审批门、无生产动作
+- chapters：由 `markers.json` 的单调运行时标记生成
+
+## 验收
+
+`discover` 保存真实控件名称、角色、几何和 health；`rehearse` 不录视频地完成同一真实链路；`record` 重新执行真实链路；`finalize.py` 只在 Mac mini 做 FFmpeg 编码、poster、contact sheet 和交互帧条。
+
+必须检查：三步入口、问题分诊、唯一 AskUserQuestion、批准后 Agent steps、人工反馈、五条路线、Blast Radius、隔离 SQLite 决定、刷新后历史、移动端无溢出、无浏览器错误。不能用 API 成功代替画面验收。

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="WIN AGENT OS Triage Funnel 的 Web Mock TUI。">
+  <title>运行简报 · 三步 Mock TUI V9</title>
+  <link rel="stylesheet" href="/demo.css">
+</head>
+<body>
+  <a class="skip" href="#mock-tui">跳到 Mock TUI</a>
+  <header class="page-top">
+    <div class="brand"><span class="brand-mark">&gt;_</span><span>运行简报 / Mock TUI</span></div>
+    <small>PRODUCT-DEMO V9 · LOCAL STORY</small>
+  </header>
+  <section class="intro">
+    <h1>把网页，做成一台会说话的终端。</h1>
+    <p>三步完成：Agent 分诊，探针只过一次 AskUserQuestion，最后由人选择并应用路线。</p>
+  </section>
+
+  <main id="mock-tui" class="shell" aria-label="Triage Funnel Web Mock TUI">
+    <div class="window-bar"><div class="dots"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div><span class="window-title">triage-funnel.local / mock-tui</span><span class="window-state">NO PROD ACTIONS</span></div>
+    <div class="flow-strip" aria-label="三步流程"><span class="flow-strip-step active">01 TRIAGE</span><span class="flow-strip-line"></span><span class="flow-strip-step">02 PROBE · ONE GATE</span><span class="flow-strip-line"></span><span class="flow-strip-step">03 ROUTE &amp; APPLY</span></div>
+    <div class="terminal-grid">
+      <aside id="source-pane" class="source-pane" aria-label="原始日志与问题队列"></aside>
+      <section id="main-pane" class="main-pane" aria-live="polite"></section>
+      <aside id="trace-pane" class="trace-pane" aria-label="Agent steps and keyboard help"></aside>
+    </div>
+    <div id="terminal-status" class="terminal-status" role="status" aria-live="polite"><span class="status-led"></span><span class="status-text"></span></div>
+  </main>
+
+  <dialog id="ask-question" aria-labelledby="ask-title" aria-describedby="ask-description">
+    <form method="dialog" class="ask-card">
+      <div class="ask-header"><span>AskUserQuestion</span><button id="ask-cancel-icon" type="button" aria-label="关闭">×</button></div>
+      <p class="ask-gate">ONE APPROVAL GATE</p>
+      <h2 id="ask-title">允许 Agent 为这个问题添加探针？</h2>
+      <p id="ask-description">批准后，Agent 自动添加一次最小复现探针，展示处理步骤并等待人工反馈。不会直接修复业务。</p>
+      <div class="ask-target"><span>当前问题</span><strong id="ask-issue">登录异常</strong></div>
+      <div class="ask-footer"><button id="ask-cancel" type="button">取消</button><button id="ask-approve" type="button" class="ask-approve">批准并开始</button></div>
+    </form>
+  </dialog>
+
+  <section class="references">
+    <details>
+      <summary>DESIGN NOTES · Lazyweb reference set</summary>
+      <div class="reference-body">
+        <p>结构参考 Linear 的单对象入口、incident.io 的严重度层级、FireHydrant 的响应上下文。只借信息层级，不复制品牌、图片或代码。<a href="https://www.lazyweb.com/agentic-search/f77a59f4-638d-4f40-a5ad-4ae9ab268b61" target="_blank" rel="noopener noreferrer">查看 Lazyweb Agentic Search</a></p>
+      </div>
+    </details>
+  </section>
+  <footer><span>运行简报 / V9 · Web Mock TUI · 原创界面</span><span>来源项目：/Users/liushiyuwin/projects/win-agent-ops-eve<br>Pi session ID: 01a08e1d-49bf-75dd-9571-f161037241c9</span></footer>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>

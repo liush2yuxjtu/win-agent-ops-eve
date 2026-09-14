@@ -1,5 +1,9 @@
 # win-agent-ops-eve：独立诊断助手
 
+## 当前采用的三步 Triage Funnel（2026-09-11）
+
+设计已从 V6/V7 多窗口方案收敛为单条真实工作流：`TRIAGE`、`PROBE · ONE APPROVAL GATE`、`ROUTE & APPLY FIX`。原始长日志默认收起；Agent 先整理全部问题并分到 `P0/P1/P2/P3`，人选择一个问题；添加探针只打开一次 `AskUserQuestion`，批准后显示 Agent steps 和人工反馈；最后 Agent 给出 5 条带 Blast Radius 的独立路线，人记录采纳或暂缓。真实工作台不得录制离线 product-demo 代替，当前 UI 真源为 `web/`，Mock 参考为 `product-demo-v9/`。完整契约见 `docs/PRODUCT-DEMO-DESIGN.md`。真实应用已按该契约完成隔离数据库录制，最新证据在 `artifacts/real-app-demo-v2/`，流程说明在 `docs/REAL-APP-RECORDING.md`。
+
 ## V3 已批准并接入真实工作台
 
 用户已批准 Mobbin 参考的 V3，并明确要求录制真实应用而非 product-demo。真实入口为 `http://127.0.0.1:8766/`，React 界面已接入监控、Eve/CPA 和 SQLite。新版诊断面向领导，方案为独立处理路线。修复了确认窗口理由残留及缓存监控结果与实时检查语义混淆。23 项后端测试、真实模型浏览器隔离写入回归和 Eve strict eval 已通过。

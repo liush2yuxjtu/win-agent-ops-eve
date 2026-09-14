@@ -1,53 +1,76 @@
-# V3 真实应用接入与录制
+# V8 三步 Triage Funnel：真实应用接入与录制
 
-用户已批准 V3 设计并要求录制真实应用。入口仍为 `http://127.0.0.1:8766/`。正式工作台已使用 V3 的白底布局、问题队列、右侧属性和确认窗口。不是把 prototype 放进 iframe，也不是录制假数据页面。
+## 当前结论
 
-## 真实链路
+`web/` 已采用 `product-demo-v9/` 的三步信息流，并完成真实应用录像。不能用 Mock 页面代替真实应用，也不能把“人工采纳”说成业务修复。
 
-- 浏览器调用实际 Python `/api/state`、`/api/issue`、`/api/diagnose`、`/api/model-run` 和 `/api/quality`。
-- 源数据来自原有监控。Eve/CPA 在 Mac mini 执行，结果写入真实 `data/ops.sqlite`。
-- 录制时 Mac mini 浏览器经专用 SSH 反向转发访问 MacBook 的真实应用。没有 fixture 服务、模型替换或 localStorage 业务记录。
-- 视频记录了 `scaro.auth` 的实际模型回合。运行 ID、Eve 会话、SQLite 诊断版本、前后记录数量和前端 SHA-256 见 `artifacts/real-app-demo/proof.json`。
-- 录制只新增真实诊断。在确认窗口返回比较，不为了展示而写入人为决定或处理结果，也没有执行业务修复。
+真实入口仍是 `http://127.0.0.1:8766/`。录像时为避免污染正式工作台历史，在 MacBook 启动了同一真实应用代码的隔离实例 `http://127.0.0.1:8773/`，读取真实 `legacy-monitor` 源，使用临时 SQLite；Mac mini 浏览器通过专用 SSH 反向转发访问它。
 
-## 改动
+## 三步真实流程
 
-`web/app.jsx` 是实际 React 客户端，保留 json-render 组件注册和既有 Python 服务。采用 Sidebar、Document、Inspector、Dialog 的职责划分。`web/style.css` 消费已批准 V3 的样式，不沿用旧绿色舞台。
+### 1. TRIAGE
 
-`/api/quality` 读取真实 SQLite 诊断数量、反馈类型、首选方案反馈关联及当前诊断中的风险候选。不用数量冒充准确率，没有新增假扫描器。
+- 展示全部已有问题的标题、描述和 `P0/P1/P2/P3`。
+- 原始长日志默认收起，按需展开。
+- Agent 先整理问题，人只选择一个继续。
 
-Eve 输出改为领导版、最多五条独立路线。单纯查证放入缺失证据或适用条件，不作为步骤式方案。旧技术诊断仍保留，只有生成新领导简报后才开放新的方案决定入口。
+### 2. PROBE · ONE APPROVAL GATE
 
-两项具体修复。
+- 点击“添加探针”后打开唯一 `AskUserQuestion`。
+- “批准并开始”后，真实页面展示四个 Agent steps：读取问题、自动添加探针、寻找复现、等待人工反馈。
+- 人点击“问题已复现”。录制不执行生产探针。
 
-1. 确认窗口重开时，原来依赖 effect 清空理由，会短暂沿用上一次状态。改为把理由和决定类型绑定本次待确认快照，新窗口同步得到空理由。
-2. 证据包明确区分监控保存结果与实时探测。源心跳不是登录执行时间，缓存异常不能说成当前已实测故障。模型提示和事实字段共同表达这个边界，旧判断不覆盖历史。
+### 3. ROUTE & APPLY FIX
 
-## 工程参考
+- 真实 Eve 结果提供 5 条独立路线。
+- 每条显示复现探针、解决动作、Blast Radius、验收和回退。
+- 选择第二条路线，填写理由，点击“应用这条路线（只记录）”。
+- 决定写入隔离 SQLite，随后进入决策记录并重载页面确认留痕。
+- 真实业务修复仍由团队手工执行，页面不直接改变业务服务。
 
-核对过 Vercel Templates 的 Admin Dashboard 与 Next.js & shadcn/ui Admin Dashboard。
+## 录制证据
 
-- `vercel/nextjs-postgres-auth-starter` 为 Vercel 官方仓库，核对时 1,053 stars，未归档，最后推送为 2024-06-23，API 未返回许可证。未复制其代码，也未引入它的 Postgres/Auth 依赖。
-- 选择工程模式参考 `arhamkhnz/next-shadcn-admin-dashboard`，Vercel 目录收录的社区模板，非 Vercel 官方开发。核对时 3,009 stars，MIT，未归档，最近推送 2026-09-09，commit `27334e9bd8e7dc194c72ac08e17810ba7b52430e`。
-- 源码为 `https://github.com/arhamkhnz/next-shadcn-admin-dashboard`，模板为 `https://vercel.com/templates/next.js/next-js-and-shadcn-ui-admin-dashboard`。依赖与安装脚本清单保存于 `verification/template-package.json`。
-- 实际融合的是应用壳、分区客户端组件和显式加载/错误状态模式，没有复制原模板组件或声称基于它的源码 fork。已有项目不迁移到 Next.js 16，不引入模板的三十余项依赖，不执行 Husky 安装脚本，不新增云数据库、认证或分析服务费用。
+最新成片：`artifacts/real-app-demo-v2/real-app.mp4`
+
+- 时长：59.166 秒
+- 画面：1440×1000
+- 编码：H.264、`yuv420p`、30 FPS、无音轨
+- 真实问题：`scaro.auth`
+- 真实 Eve session：`wrun_01M2ESAQPJ45BY00VEC6YEWY6S`
+- 真实诊断 revision：`7603599b8e0ea5d532f2bb922675849e5c06c6537f4bd4c32909f1a42f5d3209`
+- fixture server：否
+- mocked model：否
+- 隔离数据库：是
+- 录制期间人工决定：1 条，未写正式数据库
+- 录制期间处理结果：0 条
+
+`proof.json` 保存实际 URL、health、前端 SHA-256、run ID、session ID、SQLite 前后指标和 marker。`chapters.json` 由实际运行时 marker 生成。`contact.png` 和 `strip-*.png` 已逐张检查。
+
+## 固定执行路线
+
+作者脚本在本机，浏览器录制、FFmpeg、抽帧和 MP4 编码全部经过：
+
+```bash
+$HOME/.pi/agent/bin/video-render-macmini --check
+$HOME/.pi/agent/bin/video-render-macmini \
+  --project "$PWD/tools/real-ui-demo" \
+  --output artifacts/record \
+  -- bash run.sh record
+```
+
+`tools/real-ui-demo/run.sh` 使用 Mac mini 已安装 Chrome channel。`finalize.py` 只在 Mac mini 执行 FFmpeg、`ffprobe`、poster、contact sheet 和交互帧条。MacBook 仅负责编辑、传输和使用 Pi `read` 检查返回的 PNG。
 
 ## 验证
 
-- 后端测试 23 项，包括真实反馈汇总与缓存证据语义。
-- `tests/browser_leader.py` 用隔离测试数据库调用真实 Eve，验证暂缓、拒绝、采纳、结果反馈、进程重启、跨站/会话/CSRF/Host 拒绝和窄屏布局。隔离测试不是录像目标。
-- `tests/browser_check.py` 和 `tests/browser_model.py` 已迁移为该真实领导界面套件的兼容入口。
-- 当前 Eve 一项完整 strict eval 通过。原来检查第一方案是否写 PID 的断言，已改为检查展开归因保持正确进程语义，避免与领导版独立方案要求冲突。
-- 实际应用完成 discovery、rehearse 和 record，框架错误为零。已查看全片 contact sheet、十张交互帧条，以及完整业务影响和确认窗口画面。
+- `python3 -m unittest discover -s tests -p 'test_*.py'`：23 项通过。
+- `python3 tests/browser_leader.py`：隔离 DB、真实 Eve、三步界面、唯一探针审批门、Agent steps、人工反馈、5 条路线、Blast Radius、人工应用留痕、重启、移动端和安全边界通过。
+- `impeccable detect --json web/app.jsx web/style.css web/index.html`：无发现。
+- `video-render-macmini --check`：通过；录像时 Mac mini 可用空间约 32 GiB。
+- 远端 `ffprobe`：H.264、1440×1000、30 FPS、`yuv420p`、59.166 秒，无音轨。
+- 画面检查：无空白帧、错误弹窗、裁切主要内容或未拥有的页面；AskUserQuestion、Agent steps、路线范围和历史留痕均可读。
 
-这不代表全项目质量目标完成。没有独立事故集证明准确率提升，没有自动优化或自动修复。
+## 历史产物
 
-## 视频
-
-成片为 `artifacts/real-app-demo/real-app.mp4`，65.27 秒，1440×1000，H.264、yuv420p、30 FPS，无音轨。真实模型等待约 52.27 秒，压缩到 5 秒，并有明确字幕，其余操作原速。
-
-所有录制、编码和抽帧经 `video-render-macmini` 在 Mac mini 完成。磁盘空间多次波动，低于门槛的调用未启动；在通过预检的调用中完成了完整录制和编码。没有清理远端缓存、源码或历史。额外抽帧尝试后来被门槛拦截，未覆盖已经成功生成的视频；本次验收使用首次成功生成的十张帧条和全片缩略图。
-
-录制代码在 `tools/real-ui-demo/`。该目录不包含应用副本或样例服务器，地址必须对应 health 返回 `ui=leader-live-v1` 的真实应用。下一次录制前先恢复专用反向转发，再经统一入口执行，不打开临时 mockup 作为替代。
-
-启动应用用 `python3 scripts/start.py`。升级 Python 后用 `python3 scripts/restart.py`，它先检查真实诊断是否仍在运行、备份数据库、核对精确进程命令，再重启本工作台，不终止其它服务。
+- `artifacts/demo/demo.mp4`：旧隔离演示库录像，不是最新真实交付。
+- `artifacts/real-app-demo/real-app.mp4`：旧 V3 真实应用录像，保留作历史。
+- `product-demo-v9/`：已批准的 Web Mock TUI 参考，不能冒充真实 UI。
