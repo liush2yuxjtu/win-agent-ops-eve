@@ -4,8 +4,8 @@
   "playable": true,
   "runtime": "running",
   "url": "http://127.0.0.1:8766/",
-  "implementation": "已批准的 V3 设计接入真实 React 工作台、监控、Eve/CPA 与 SQLite；已录制真实应用；准确率提升尚未证明",
-  "ui": "leader-live-v1",
+  "implementation": "已采用三步 Triage Funnel 真实工作台：Agent 分诊全部问题，唯一 AskUserQuestion 探针审批门，5 条带 Blast Radius 的路线由人记录应用或暂缓；业务修复不自动执行",
+  "ui": "triage-funnel-real-v1",
   "audience": "leadership-v1",
   "engine": "eve-cpa-1",
   "defaultStrategy": "baseline",
@@ -13,29 +13,39 @@
   "upstreamModelVerifiedPerDiagnosis": false,
   "runtime_machine": "MacBook Python/SQLite 工作台；Mac mini Eve 0.38.3 和 CPA",
   "eveRuntime": "eve dev --no-ui，127.0.0.1:21876，未配置开机自启动",
-  "ship": "not-started",
+  "ship": "merged",
   "authorization_needed": null,
-  "removed_blocker": "Eve 项目旧清理前置条件已撤销；录制仍遵守统一入口门槛，在通过预检时完成；未清理远端文件",
+  "removed_blocker": "Eve 项目旧清理前置条件已撤销；视频录制前清理了经核验无占用的 Mac mini 可重建缓存，保留源码、数据库和凭据",
   "source_roots_untouched": true,
   "new_subagents_launched": false,
   "persistence": "data/ops.sqlite，追加 model_runs 及模型诊断历史",
   "history_readonly": "history.sqlite",
   "operations": "docs/OPERATIONS.md",
+  "designContract": "docs/PRODUCT-DEMO-DESIGN.md",
   "decisionTrail": "decisions.tsv",
   "uiDemo": {
-    "path": "artifacts/real-app-demo/real-app.mp4",
-    "durationSeconds": 65.266667,
+    "path": "tools/real-ui-demo/artifacts/real-app-demo-v2/real-app.mp4",
+    "convenienceCopy": "artifacts/real-app-demo-v2/real-app.mp4",
+    "durationSeconds": 59.166016,
     "dimensions": "1440x1000",
     "realAppRecording": true,
     "realModelCall": true,
-    "isolatedDemoDatabase": false,
+    "isolatedDemoDatabase": true,
     "mockedModel": false,
-    "decisionsWrittenDuringRecording": 0,
+    "decisionsWrittenDuringRecording": 1,
     "outcomesWrittenDuringRecording": 0,
-    "bugsFixed": ["确认窗口短暂沿用旧理由", "证据包混淆监控保存时间与实际检查时间"],
+    "probeApprovalGate": "one",
+    "bugsFixed": [
+      "三步 Triage Funnel 取代旧多窗口主流程",
+      "唯一 AskUserQuestion 探针审批门",
+      "Agent steps 和人工反馈可见",
+      "5 条路线展示 Blast Radius 并由人应用决定"
+    ],
     "rehearsalAndVisualQA": "passed",
-    "proof": "artifacts/real-app-demo/proof.json",
-    "notes": "docs/REAL-APP-RECORDING.md"
+    "proof": "tools/real-ui-demo/artifacts/real-app-demo-v2/proof.json",
+    "chapters": "tools/real-ui-demo/artifacts/real-app-demo-v2/chapters.json",
+    "notes": "真实工作台代码和真实 Eve/CPA 请求；录制决定只写隔离 SQLite，不执行业务修复。",
+    "recordingNotes": "docs/REAL-APP-RECORDING.md"
   },
   "verification": {
     "unit_tests": 23,
@@ -46,7 +56,7 @@
     "eve_strict_eval_cases": 1,
     "eve_strict_eval_passed": true,
     "eve_strict_eval": "verification/strict-eval-leader.json",
-    "real_monitor_diagnosis": "artifacts/real-app-demo/proof.json",
+    "real_monitor_diagnosis": "artifacts/real-app-demo-v2/proof.json",
     "production_test_decisions": 0,
     "sqlite_integrity": "ok"
   },
@@ -63,6 +73,6 @@
     "真实独立标注事故集和更可靠评分，持续测漏报、误报、Top 1 与 Top 5",
     "模型主动历史检索工具和持续隐藏问题扫描",
     "自动优化与盲测晋级、项目只读 eval MCP 和 Pi eval_review",
-    "生产常驻部署和 Git ship"
+    "生产常驻部署"
   ]
 }

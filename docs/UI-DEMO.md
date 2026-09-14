@@ -1,46 +1,39 @@
-# 运维工作台操作演示
+# 真实应用 UI Demo
 
-成片位于 `artifacts/demo/demo.mp4`，67.6 秒，1440×900，H.264、yuv420p、30 FPS，无配音。字幕、鼠标移动、逐字输入及状态变化来自真实浏览器。
+最新真实录像位于 `tools/real-ui-demo/artifacts/real-app-demo-v2/real-app.mp4`；本机交付副本为 `artifacts/real-app-demo-v2/real-app.mp4`。
 
-视频使用隔离演示库和合成监控案例，右上角始终明确标注。Eve/CPA 回合是真实调用。约 45.7 秒模型等待压缩为 5 秒，字幕明确说明加速；其他操作原速。正式 SQLite 未写入演示决定。
+- 时长：59.166 秒
+- 画面：1440×1000
+- 编码：H.264、`yuv420p`、30 FPS、无音轨
+- 录制对象：`web/` 构建出的真实工作台
+- 模型：真实 Eve/CPA 回合
+- 录制库：临时隔离 SQLite
+- 最新运行：`wrun_01M2ESAQPJ45BY00VEC6YEWY6S`
+- 人工决定：1 条，仅写入隔离库
+- 生产执行：0
 
-## 录制中修复的问题
+## 观看顺序
 
-1. 切换问题后，上一问题的追问文本仍留在输入框。根因是组件状态不随问题 ID 更新。现按问题 ID 清空草稿。
-2. 在诊断区域操作时，页顶反馈已滚出视口。根因是进度和错误只在 Header 渲染。现于诊断按钮旁同步显示反馈，并保留 aria-live。
+1. **Triage**：真实问题队列、P0/P1/P2/P3、长日志默认收起。
+2. **Probe**：打开唯一 `AskUserQuestion`，批准添加探针；页面展示读取问题、添加探针、寻找复现、等待人工反馈。
+3. **Feedback**：人工点击“问题已复现”。
+4. **Route & Apply Fix**：查看 5 条独立路线与 Blast Radius，选择路线并点击“应用这条路线（只记录）”。
+5. **SQLite history**：打开决策记录，重载页面确认真实诊断与人工决定仍在。
 
-产品改动在 `web/app.jsx` 和 `web/style.css`，Mac mini 构建产物已同步为 `web/app.js`。没有修改诊断规则、模型、业务服务或生产数据。
+视频只压缩明确标记的真实 Eve 等待段，其余鼠标移动、点击、输入、页面滚动和状态变化保持原速。字幕明确区分真实模型等待与后处理加速。
 
-复现前的浏览器结果在 `verification/ui-demo-before/reproduction.json`。修复后 `tools/demo-video/artifacts/check/run.log` 显示 `questionLeaked=false`、`localFeedbackVisible=true`、无浏览器错误。
+## 证据
 
-## 验证和产物
+- `tools/real-ui-demo/artifacts/real-app-demo-v2/proof.json`：真实 URL、前端 hash、Eve session、诊断版本、SQLite 指标和边界。
+- `tools/real-ui-demo/artifacts/real-app-demo-v2/ffprobe.json`：远端 FFmpeg 输出元数据。
+- `tools/real-ui-demo/artifacts/real-app-demo-v2/chapters.json`：由运行时标记生成的章节。
+- `tools/real-ui-demo/artifacts/real-app-demo-v2/contact.png`：全片 contact sheet。
+- `tools/real-ui-demo/artifacts/real-app-demo-v2/strip-*.png`：主要交互区间帧条。
+- `tools/real-ui-demo/artifacts/real-app-demo-v2/QA.json`：画面检查结论。
+- `tools/real-ui-demo/BRIEF.md`、`record.mjs`、`finalize.py`：真实录制流程。
 
-- discover 保存真实元素、名称和几何位置。
-- check 重跑切换追问及就近反馈回归，有断言，失败退出。
-- rehearse 完成真实模型调用、方案展开、采纳和页面刷新，无录屏。
-- record 重跑上述操作，实际模型返回四条互补方案，采纳后红灯未被关闭，刷新后决定仍在。
-- inspect 已逐张查看全片缩略图、十一张关键区间帧条、全尺寸方案画面和最终历史画面。最终历史停留约五秒。未发现空白片段、核心操作遮挡或弹窗分片。
+## 边界
 
-`artifacts/demo/chapters.json` 来自实际运行时标记。`qa/` 保存帧条，`proof.json` 保存语义、状态和几何验证，`edit.json` 保存等待加速参数。原始 WebM 保留于 `tools/demo-video/artifacts/record/raw.webm`。
+`product-demo-v9/` 是已批准设计的本地 Mock 参考，不能替代真实录像。真实录像使用同一 `web/` UI、真实监控源、真实 Eve/CPA 和真实 SQLite 代码路径；录制期间不使用 fixture server、模型替换或 localStorage 业务记录。
 
-## 由 Pi 重录
-
-只复制指定的八个源文件，不能把整个项目和历史数据库送进同步目录。
-
-```bash
-cd /Users/liushiyuwin/projects/win-agent-ops-eve
-python3 tools/demo-video/prepare.py
-```
-
-随后按顺序通过统一远端入口执行 `check`、`rehearse`、`record`。
-
-```bash
-~/.pi/agent/bin/video-render-macmini \
-  --project "$PWD/tools/demo-video" \
-  --output artifacts/record \
-  -- bash render.sh record
-```
-
-`serve.py` 只把 SSH 传输换为 Mac mini 同机调用原来的 `diagnose.mjs`，不替换或模拟模型结果。演示数据库和浏览器 profile 位于本次临时目录，结束后清理。生产 Eve 服务保持运行。
-
-全部浏览器录制、视频编码和帧提取均在 Mac mini 完成。未公开发布、未 ship。子代理启动开关仍关闭，未做独立子代理评审。
+“应用这条路线”在当前工作台语义中只记录人工采纳，不直接修复业务。探针流程仍是 UI 中的受控展示，不自动写入生产系统。历史旧录像 `artifacts/demo/demo.mp4` 与 `artifacts/real-app-demo/real-app.mp4` 保留，但不作为最新交付。
